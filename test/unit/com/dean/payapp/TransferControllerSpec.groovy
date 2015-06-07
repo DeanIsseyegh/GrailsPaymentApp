@@ -1,18 +1,19 @@
 package com.dean.payapp
 
+import grails.plugin.mail.MailService
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import spock.lang.Specification
 import grails.test.mixin.domain.DomainClassUnitTestMixin
+import com.icegreen.greenmail.util.*
 
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
 @TestFor(TransferController)
 @TestMixin(DomainClassUnitTestMixin)
-@Mock([Transaction, Deposit, Withdraw, Account])
+@Mock([Transaction, Deposit, Withdraw, Account, MailService])
 class TransferControllerSpec extends Specification {
-
 	AccountService accountService
 	Account acc1
 	Account acc2
@@ -23,6 +24,7 @@ class TransferControllerSpec extends Specification {
 		acc1 = new Account(accountName: "Bob", email: "bob@gmail.com")
 		acc2 = new Account(accountName: "George", email: "george@gmail.com")
 		mockDomain(Account, [acc1, acc2])
+		controller.mailService = Mock(MailService)
     }
 
     def cleanup() {

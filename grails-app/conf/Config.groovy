@@ -94,13 +94,19 @@ grails.hibernate.pass.readonly = false
 grails.hibernate.osiv.readonly = false
 
 environments {
-    development {
-        grails.logging.jul.usebridge = true
-    }
     production {
-        grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
+        grails.serverURL = "http://www.changeme.com"
     }
+    development {
+		grails.mail.port = com.icegreen.greenmail.util.ServerSetupTest.SMTP.port
+        grails.serverURL = "http://localhost:8080/${appName}"
+    }
+    test {
+		grails.mail.port = com.icegreen.greenmail.util.ServerSetupTest.SMTP.port
+		grails.mail.host = "localhost"
+        grails.serverURL = "http://localhost:8080/${appName}"
+    }
+
 }
 
 // log4j configuration
