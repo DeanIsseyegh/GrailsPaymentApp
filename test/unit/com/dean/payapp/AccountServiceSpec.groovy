@@ -10,24 +10,27 @@ import com.dean.payapp.Account
 class AccountServiceSpec extends Specification {
 	
 	List<Account> testAccounts;
+	def acc1;
+	def acc2;
+	def acc3;
+	def acc4;
 	
 	def setup() {
 		mockDomain(Account)
 		mockDomain(Withdraw)
 		mockDomain(Deposit)
 		mockDomain(Transaction)
-		def account1 = new Account(accountName: "Bob", email: "bob@gmail.com").save()
-		def account2 = new Account(accountName: "George", email: "george@gmail.com").save()
-		def account3 = new Account(accountName: "Rodger", email: "rodger@gmail.com").save()
-		def account4 = new Account(accountName: "Felicity", email: "felicity@gmail.com").save()
+		
+		acc1 = new Account(accountName: "Bob", email: "bob@gmail.com").save()
+		acc2 = new Account(accountName: "George", email: "george@gmail.com").save()
+		acc3 = new Account(accountName: "Rodger", email: "rodger@gmail.com").save()
+		acc4 = new Account(accountName: "Felicity", email: "felicity@gmail.com").save()
+		
 		testAccounts = new ArrayList<>()
-		testAccounts.add(account1)
-		testAccounts.add(account2)
-		testAccounts.add(account3)
-		testAccounts.add(account4)
-		addTransaction(account1, account2, 50)
-		addTransaction(account2, account1, 33)
-		addTransaction(account1, account4, 22)
+		testAccounts.add(acc1)
+		testAccounts.add(acc2)
+		testAccounts.add(acc3)
+		testAccounts.add(acc4)
 	}
 	
     void "should retrieve list of accounts"() {
@@ -46,19 +49,39 @@ class AccountServiceSpec extends Specification {
 		service.transactional == true
 	}
 	
-	/**
-	 * Convenience method to add transactions to accounts
-	 *
-	 * @param fromAcc
-	 * @param toAcc
-	 * @param transaction
-	 */
-	private void addTransaction(Account fromAcc, Account toAcc, long amount) {
-		Withdraw withdraw = new Withdraw(account: fromAcc)
-		Deposit deposit = new Deposit(account: toAcc)
-		Transaction transaction = new Transaction(amount: amount, withdraw: withdraw, deposit: deposit).save()
+	void "should transfer money if account has enough balance"() {
+		given:
+		def initialFromAccBalance = acc1.balance
+		def initialToAccBalance = acc2.balance
 		
-		fromAcc.balance -= transaction.amount
-		toAcc.balance += transaction.amount
+		when:
+		def result = service.transfer(acc1.email, acc2.email, amountToTransfer)
+		
+		then:
+		println "Acc1 balance from " + initialFromAccBalance + " => " + acc1.balance 
+		println "Acc2 balance from " + initialToAccBalance + " => " + acc2.balance
+		acc1.balance == initialFromAccBalance - amountToTransfer
+		acc2.balance == initialToAccBalance + amountToTransfer
+		result == true
+		
+		where:
+		amountToTransfer = 50
 	}
+	
+	void "should not transfer money and return false given the account does not have enough balance"() {
+		given:
+		def initialFromAccBalance = acc1.balance
+		def initialToAccBalance = acc2.balance
+		
+		when:
+		def result = service.transfer(acc1.email, acc2.email, (acc1.balance + 1))
+		
+		then:
+		println "Acc1 balance from " + initialFromAccBalance + " => " + acc1.balance
+		println "Acc2 balance from " + initialToAccBalance + " => " + acc2.balance
+		acc1.balance == initialFromAccBalance
+		acc2.balance == initialToAccBalance
+		result == false
+	}
+
 }
