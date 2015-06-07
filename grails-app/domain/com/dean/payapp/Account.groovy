@@ -9,7 +9,7 @@ class Account {
 	static hasMany = [withdraws:Withdraw, deposits:Deposit]
 	
     static constraints = {
-		balance min: 0L
+		balance(defaultValue: 200, min: 0L)
 		email unique: true
     }
 }
