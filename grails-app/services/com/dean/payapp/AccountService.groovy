@@ -1,7 +1,5 @@
 package com.dean.payapp
 
-import java.util.List;
-
 import grails.transaction.Transactional
 
 /**
@@ -69,4 +67,44 @@ class AccountService {
 		}
 		false
 	}
+	
+	/**
+	 * Will get a list of all the deposits and withdrawals that have occurred on the account.
+	 *
+	 * @param accEmail
+	 * @return a list of all the transactions that have happened on specified account sorted by by most recent
+	 */
+	List<AccountTransaction> getTransactionHistory(String accEmail) {
+		Account account = Account.findByEmail(accEmail)
+		def withdrawals = Withdraw.findAllByAccount(account)
+		def deposits = Deposit.findAllByAccount(account)
+		List<AccountTransaction> accTransactions = new ArrayList<>()
+		
+		withdrawals.forEach( { withdraw -> println "${withdraw.transaction.amount}" } )
+		deposits.forEach( { deposit -> println "${deposit.transaction.amount}" } )
+		
+		for (Withdraw withdraw : withdrawals) {
+			//Transaction trans = findTransactionByWithdraw(withdraw)
+			Transaction trans = withdraw.transaction
+			Deposit deposit = trans.deposit
+			Account otherAcc = deposit.account
+			// Create an account with negative amount because its a withdrawal
+			AccountTransaction accTrans = new AccountTransaction(amount: (-trans.amount), date: trans.date,
+				otherAccName: otherAcc.accountName, otherAccEmail: otherAcc.email)
+			accTransactions.add(accTrans)
+		}
+		
+		for (Deposit deposit : deposits) {
+			Transaction trans = deposit.transaction
+			Withdraw withdraw = trans.withdraw
+			Account otherAcc = withdraw.account
+			// Create an account with a postive amount because its a deposit
+			AccountTransaction accTrans = new AccountTransaction(amount: trans.amount, date: trans.date,
+				otherAccName: otherAcc.accountName, otherAccEmail: otherAcc.email)
+			accTransactions.add(accTrans)
+		}
+		
+		accTransactions.sort(true)
+	}
+	
 }

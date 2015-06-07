@@ -55,14 +55,14 @@ class AccountServiceSpec extends Specification {
 		def initialToAccBalance = acc2.balance
 		
 		when:
-		def result = service.transfer(acc1.email, acc2.email, amountToTransfer)
+		def wasEnoughMoney = service.transfer(acc1.email, acc2.email, amountToTransfer)
 		
 		then:
 		println "Acc1 balance from " + initialFromAccBalance + " => " + acc1.balance 
 		println "Acc2 balance from " + initialToAccBalance + " => " + acc2.balance
 		acc1.balance == initialFromAccBalance - amountToTransfer
 		acc2.balance == initialToAccBalance + amountToTransfer
-		result == true
+		wasEnoughMoney == true
 		
 		where:
 		amountToTransfer = 50
@@ -74,14 +74,27 @@ class AccountServiceSpec extends Specification {
 		def initialToAccBalance = acc2.balance
 		
 		when:
-		def result = service.transfer(acc1.email, acc2.email, (acc1.balance + 1))
+		def wasEnoughMoney = service.transfer(acc1.email, acc2.email, (acc1.balance + 1))
 		
 		then:
 		println "Acc1 balance from " + initialFromAccBalance + " => " + acc1.balance
 		println "Acc2 balance from " + initialToAccBalance + " => " + acc2.balance
 		acc1.balance == initialFromAccBalance
 		acc2.balance == initialToAccBalance
-		result == false
+		wasEnoughMoney == false
 	}
-
+	
+	void "should return a history of transactions"() {
+		given:
+		service.transfer(acc1.email, acc2.email, 50)
+		service.transfer(acc3.email, acc1.email, 10)
+		
+		when:
+		List<AccountTransaction> history = service.getTransactionHistory(acc1.email)
+		
+		then:
+		history.size() == 2
+		history.get(0).amount == -50
+		history.get(1).amount == 10
+	}
 }
