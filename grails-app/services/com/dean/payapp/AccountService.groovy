@@ -51,7 +51,7 @@ class AccountService {
 	 * @param toAcc
 	 * @param transaction
 	 */
-	private void addTransaction(Account fromAcc, Account toAcc, long amount) {
+	void addTransaction(Account fromAcc, Account toAcc, long amount) {
 		Withdraw withdraw = new Withdraw(account: fromAcc)
 		Deposit deposit = new Deposit(account: toAcc)
 		Transaction transaction = new Transaction(amount: amount, withdraw: withdraw, deposit: deposit).save()
@@ -79,9 +79,6 @@ class AccountService {
 		def withdrawals = Withdraw.findAllByAccount(account)
 		def deposits = Deposit.findAllByAccount(account)
 		List<AccountTransaction> accTransactions = new ArrayList<>()
-		
-		withdrawals.forEach( { withdraw -> println "${withdraw.transaction.amount}" } )
-		deposits.forEach( { deposit -> println "${deposit.transaction.amount}" } )
 		
 		for (Withdraw withdraw : withdrawals) {
 			//Transaction trans = findTransactionByWithdraw(withdraw)
