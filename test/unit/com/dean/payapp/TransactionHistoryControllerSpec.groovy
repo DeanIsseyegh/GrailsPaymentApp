@@ -60,4 +60,5 @@ class TransactionHistoryControllerSpec extends Specification {
 		def value = accountHistory.get(key)
 		value.size() == numOfTransactions
 	}
+	
 }

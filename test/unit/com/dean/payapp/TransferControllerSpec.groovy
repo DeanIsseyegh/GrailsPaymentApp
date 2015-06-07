@@ -20,6 +20,9 @@ class TransferControllerSpec extends Specification {
     def setup() {
 		accountService = new AccountService()
 		controller.accountService = accountService
+		acc1 = new Account(accountName: "Bob", email: "bob@gmail.com")
+		acc2 = new Account(accountName: "George", email: "george@gmail.com")
+		mockDomain(Account, [acc1, acc2])
     }
 
     def cleanup() {
@@ -28,9 +31,6 @@ class TransferControllerSpec extends Specification {
     void "index should return a map containing a list of accounts"() {
 		given:
 		int numOfAccs = 2
-		acc1 = new Account(accountName: "Bob", email: "bob@gmail.com")
-		acc2 = new Account(accountName: "George", email: "george@gmail.com")
-		mockDomain(Account, [acc1, acc2])
 		
 		when:
 		def accounts = controller.index()
@@ -43,14 +43,7 @@ class TransferControllerSpec extends Specification {
 		value.get(1) == acc2
     }
 	
-	void "makeTransfer should transfer money given a valid from and to acc, and there is enough balance"() {
-		given:
-		int numOfAccs = 2
-		acc1 = new Account(accountName: "Bob", email: "bob@gmail.com")
-		acc2 = new Account(accountName: "George", email: "george@gmail.com")
-		mockDomain(Account, [acc1, acc2])
-		
-		
+	void "makeTransfer should transfer money and show a success message given there is enough balance"() {		
 		when:
 		params.fromAcc = acc1.accountName
 		params.toAcc = acc2.accountName
@@ -59,5 +52,23 @@ class TransferControllerSpec extends Specification {
 		
 		then:
 		accountService.getTransactionHistory(acc1.email).size() == 1
+		String redirectURL = response.redirectedUrl
+		// e.g. /transfer/index?message=Oops%2C+there+was+not+enough+balance+in+that+account%21+Please+try+again+with+a+smaller+amount
+		redirectURL.toLowerCase().contains("successful") == true
+	}
+	
+	void "makeTransfer should not transfer money and show error message given balance is too low"() {
+		when:
+		params.fromAcc = acc1.accountName
+		params.toAcc = acc2.accountName
+		params.amount = "9999"
+		controller.makeTransfer()
+		
+		then:
+		accountService.getTransactionHistory(acc1.email).size() == 0
+		//response.redirectedUrl.toString().containsIgnoreCase("oops")
+		String redirectURL = response.redirectedUrl
+		// e.g. /transfer/index?message=Oops%2C+there+was+not+enough+balance+in+that+account%21+Please+try+again+with+a+smaller+amount
+		redirectURL.toLowerCase().contains("oops") == true
 	}
 }
