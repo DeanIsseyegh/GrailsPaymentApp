@@ -43,32 +43,41 @@ class TransferControllerSpec extends Specification {
 		value.get(1) == acc2
     }
 	
-	void "makeTransfer should transfer money and show a success message given there is enough balance"() {		
-		when:
+	void "makeTransfer should transfer money and show a success message given there is enough balance"() {
+		given:
 		params.fromAcc = acc1.accountName
 		params.toAcc = acc2.accountName
 		params.amount = "50"
+		def initialFromAccAmount = acc1.balance
+		def initalToAccAmount = acc2.balance
+				
+		when:
 		controller.makeTransfer()
 		
 		then:
 		accountService.getTransactionHistory(acc1.email).size() == 1
+		acc1.balance == initialFromAccAmount - Long.valueOf(params.amount)
+		acc2.balance == initalToAccAmount + Long.valueOf(params.amount)
 		String redirectURL = response.redirectedUrl
-		// e.g. /transfer/index?message=Oops%2C+there+was+not+enough+balance+in+that+account%21+Please+try+again+with+a+smaller+amount
 		redirectURL.toLowerCase().contains("successful") == true
 	}
 	
 	void "makeTransfer should not transfer money and show error message given balance is too low"() {
-		when:
+		given:
 		params.fromAcc = acc1.accountName
 		params.toAcc = acc2.accountName
 		params.amount = "9999"
+		def initialFromAccAmount = acc1.balance
+		def initalToAccAmount = acc2.balance
+		
+		when:
 		controller.makeTransfer()
 		
 		then:
 		accountService.getTransactionHistory(acc1.email).size() == 0
-		//response.redirectedUrl.toString().containsIgnoreCase("oops")
+		initialFromAccAmount == acc1.balance
+		initalToAccAmount == acc2.balance
 		String redirectURL = response.redirectedUrl
-		// e.g. /transfer/index?message=Oops%2C+there+was+not+enough+balance+in+that+account%21+Please+try+again+with+a+smaller+amount
 		redirectURL.toLowerCase().contains("oops") == true
 	}
 }
