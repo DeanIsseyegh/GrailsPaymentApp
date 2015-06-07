@@ -9,12 +9,32 @@ import spock.lang.Specification
 @TestFor(Transaction)
 class TransactionSpec extends Specification {
 
-    def setup() {
+    void "should have an amount and date"() {
+		given:
+		def trans = new Transaction(amount: amount, date: date).save()
+		
+		when:
+		def result = Transaction.findByAmountAndDate(amount, date)
+		
+		then:
+		result != null
+		
+		where:
+		amount = 50
+		date = new Date()
     }
-
-    def cleanup() {
-    }
-
-    void "test something"() {
-    }
+	
+	void "should set date by default"() {
+		given:
+		def trans = new Transaction(amount: amount).save()
+		
+		when:
+		def result = Transaction.findByAmount(amount)
+		
+		then:
+		result.date != null
+		
+		where:
+		amount = 50
+	}
 }

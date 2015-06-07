@@ -9,12 +9,6 @@ import spock.lang.Specification
 @TestFor(Account)
 class AccountSpec extends Specification {
 
-    def setup() {
-    }
-
-    def cleanup() {
-    }
-
     void "should have a name, balance and email address"() {
 		given:
 		new Account(accountName: accountName, email: email, balance: amount).save()
@@ -30,6 +24,22 @@ class AccountSpec extends Specification {
 		email = "bob@gamil.com"
 		amount = 50
     }
+	
+	void "should have a default balance of 200 pounds"() {
+		given:
+		new Account(accountName: accountName, email: email).save()
+		
+		when:
+		def result = Account.findByAccountNameAndEmail(accountName, email)
+		
+		then:
+		result.balance == 200
+		
+		where:
+		accountName = "Bob"
+		email = "bob@gamil.com"
+		amount = 50
+	}
 	
 	void "should have constraints on name and email being blank"() {
 		given:
