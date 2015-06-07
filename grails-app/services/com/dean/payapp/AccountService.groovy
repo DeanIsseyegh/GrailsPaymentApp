@@ -10,7 +10,12 @@ import grails.transaction.Transactional
  * @author Dean
  *
  */
-@Transactional
+/* @Transactional - YIKES! This causes nullpointer exceptions to be thrown in our test.
+ * https://jira.grails.org/browse/GRAILS-10538
+ * This could potentially be due to something else I am missing, but I will comment out for now
+ * for the sake of saving time!
+ * 
+ */
 class AccountService {
 	
 	static transactional = true
@@ -35,7 +40,7 @@ class AccountService {
 	 * @return if there is enough money in 'fromAccount'
 	 */
 	boolean transfer(String accFromEmail, String toAccEmail, long amount) {
-		if (isEnoughMoney(toAccEmail, amount)) {
+		if (isEnoughMoney(accFromEmail, amount)) {
 			Account fromAcc = Account.findByEmail(accFromEmail)
 			Account toAcc = Account.findByEmail(toAccEmail)
 			addTransaction(fromAcc, toAcc, amount)

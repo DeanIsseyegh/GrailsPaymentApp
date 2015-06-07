@@ -85,6 +85,7 @@ p {
 		<p>Select the transactions history page or payment page</p>
 		<ul>
 			<li class="controller"><g:link controller="transactionHistory">Transaction History</g:link></li>
+			<li class="controller"><g:link controller="transfer">Transfer Money</g:link></li>
 		</ul>
 	</div>
 </body>

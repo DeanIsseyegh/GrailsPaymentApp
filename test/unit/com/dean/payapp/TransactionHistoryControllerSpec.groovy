@@ -12,14 +12,15 @@ import grails.test.mixin.domain.DomainClassUnitTestMixin
  */
 @TestMixin(DomainClassUnitTestMixin)
 @TestFor(TransactionHistoryController)
+@Mock([Transaction, Deposit, Withdraw, Account])
 class TransactionHistoryControllerSpec extends Specification {
-	AccountService accountService = new AccountService()
+	AccountService accountService
 	Account acc1
 	Account acc2
 	
 	def setup() {
 		accountService = new AccountService()
-		controller.accountService = accountService
+		controller.accountService = this.accountService
 	}
 	
     void "index should return a map containing a list of accounts"() {
@@ -39,4 +40,24 @@ class TransactionHistoryControllerSpec extends Specification {
 		value.get(0) == acc1
 		value.get(1) == acc2
     }
+	
+	void "list should return a map containing transaction history of the selected account"() {
+		given:
+		acc1 = new Account(accountName: "Bob", email: "bob@gmail.com")
+		acc2 = new Account(accountName: "George", email: "george@gmail.com")
+		mockDomain(Account, [acc1, acc2])
+		int numOfTransactions = 3
+		accountService.addTransaction(acc1, acc2, 10)
+		accountService.addTransaction(acc1, acc2, 2)
+		accountService.addTransaction(acc1, acc2, 20)
+		
+		when:
+		params.accountName = acc1.accountName
+		def accountHistory = controller.list()
+		
+		then:
+		def key = accountHistory.keySet().iterator().next()
+		def value = accountHistory.get(key)
+		value.size() == numOfTransactions
+	}
 }

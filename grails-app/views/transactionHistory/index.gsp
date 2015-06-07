@@ -3,8 +3,6 @@
     <meta content="main" name="layout"/>
 </head>
 <body>
-%{--Use AccountService--}%
-<g:set var="service" bean="accountService"/>
 
 <form name="accountSelectionForm" action="list" controller="transactionHistory">
 	<g:select optionKey="accountName" optionValue="accountName"
