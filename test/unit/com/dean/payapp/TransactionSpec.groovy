@@ -11,7 +11,7 @@ class TransactionSpec extends Specification {
 
     void "should have an amount and date"() {
 		given:
-		def trans = new Transaction(amount: amount, date: date).save()
+		def trans = new Transaction(amount: amount, date: date, deposit: deposit, withdraw: withdraw).save()
 		
 		when:
 		def result = Transaction.findByAmountAndDate(amount, date)
@@ -22,11 +22,13 @@ class TransactionSpec extends Specification {
 		where:
 		amount = 50
 		date = new Date()
+		deposit = new Deposit()
+		withdraw = new Withdraw()
     }
 	
 	void "should set date by default"() {
 		given:
-		def trans = new Transaction(amount: amount).save()
+		def trans = new Transaction(amount: amount, deposit: deposit, withdraw: withdraw).save()
 		
 		when:
 		def result = Transaction.findByAmount(amount)
@@ -36,5 +38,7 @@ class TransactionSpec extends Specification {
 		
 		where:
 		amount = 50
+		deposit = new Deposit()
+		withdraw = new Withdraw()
 	}
 }

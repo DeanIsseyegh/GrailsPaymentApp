@@ -23,6 +23,7 @@ class AccountSpec extends Specification {
 		accountName = "Bob"
 		email = "bob@gamil.com"
 		amount = 50
+
     }
 	
 	void "should have a default balance of 200 pounds"() {
