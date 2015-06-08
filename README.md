@@ -28,6 +28,13 @@ This setup assumes STS is used as it is the IDE this project has been built in:
 * If there are complaints about the Groovy compiler version then right click project -> properties -> Groovy Compilers and make sure 2.4 is selected. If it does not appear on the list make sure you downloaded it from the update site given in step 2. If you still have issues make sure Groovy 2.4 compiled is configured at a workspace level too.
 
 
+# Things that could be improved
+
+* Unit tests could be broken up to have less assertions per test (provides more granularity and easier to track down where things went wrong).
+* I only found out about integration tests at the very end! They seem awesome and could definitely be used more.
+* Front-end sucks.
+* 
+
 # Mail Plugin
 This project uses the green mail plugin and the grails mail plugin. You should be able to access it from localhost:8080/GrailsPaymentApp/greenmail
 
