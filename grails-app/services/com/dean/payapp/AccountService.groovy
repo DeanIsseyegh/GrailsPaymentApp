@@ -30,8 +30,10 @@ class AccountService {
 	}
 	
 	/**
-	 * Given there is enough money in the 'fromAccount, will withdraw money from the fromAccount' and deposit
-	 * it into the 'toAccount' given
+	 * Transfers money between accounts given there emails.
+	 * 
+	 * Given there is enough money in the 'fromAccount', will withdraw money from the 'fromAccount' and deposit
+	 * it into the 'toAccount'. 
 	 *
 	 * @param accFromEmail
 	 * @param accToEmail
@@ -50,7 +52,10 @@ class AccountService {
 	}
 	
 	/**
-	 * Convenience method to add transactions to accounts
+	 * Convenience method to add transactions to accounts.
+	 * 
+	 * Warning: Does not check if there is enough money first! Only call this method in tests
+	 * or if you have already checked the balance first.
 	 *
 	 * @param fromAcc
 	 * @param toAcc
@@ -68,7 +73,7 @@ class AccountService {
 	private boolean isEnoughMoney(String accEmail, long amount) {
 		Account account = Account.findByEmail(accEmail)
 		if (account.balance >= amount) {
-			return true
+			return true // return keyword needed here so that it knows to break out of method
 		}
 		false
 	}
@@ -85,8 +90,8 @@ class AccountService {
 		def deposits = Deposit.findAllByAccount(account)
 		List<AccountTransaction> accTransactions = new ArrayList<>()
 		
-		for (Withdraw withdraw : withdrawals) {
-			//Transaction trans = findTransactionByWithdraw(withdraw)
+		// Lets try out some Groovy loop goodness!
+		withdrawals.each{ withdraw ->
 			Transaction trans = withdraw.transaction
 			Deposit deposit = trans.deposit
 			Account otherAcc = deposit.account
@@ -96,7 +101,7 @@ class AccountService {
 			accTransactions.add(accTrans)
 		}
 		
-		for (Deposit deposit : deposits) {
+		deposits.each{ deposit ->
 			Transaction trans = deposit.transaction
 			Withdraw withdraw = trans.withdraw
 			Account otherAcc = withdraw.account
@@ -106,6 +111,7 @@ class AccountService {
 			accTransactions.add(accTrans)
 		}
 		
+		// No return keyword needed in Groovy!
 		accTransactions.sort(true)
 	}
 	
