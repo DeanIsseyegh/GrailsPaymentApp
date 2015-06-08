@@ -16,9 +16,8 @@ I used:
 * Groovy-Eclipse: 2.9.2
 
 
-
-# Green Mail Plugin
-This project uses the green mail plugin.
+# Mail Plugin
+This project uses the green mail plugin and the grails mail plugin. You should be able to access it from localhost:8080/GrailsPaymentApp/greenmail
 
 More info about the green mail [here!](https://grails.org/plugin/greenmail)
 More info about the grails mail plugin [here!](https://grails.org/plugin/mail)
