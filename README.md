@@ -33,7 +33,7 @@ This setup assumes STS is used as it is the IDE this project has been built in:
 * Unit tests could be broken up to have less assertions per test (provides more granularity and easier to track down where things went wrong).
 * I only found out about integration tests at the very end! They seem awesome and could definitely be used more.
 * Front-end sucks.
-* 
+
 
 # Mail Plugin
 This project uses the green mail plugin and the grails mail plugin. You should be able to access it from localhost:8080/GrailsPaymentApp/greenmail
