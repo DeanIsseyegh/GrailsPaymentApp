@@ -15,6 +15,18 @@ I used:
 * STS/Grails IDE: 3.6.4
 * Groovy-Eclipse: 2.9.2
 
+# Setup
+
+This setup assumes STS is used as it is the IDE this project has been built in:
+
+* Download latest version of STS
+* Download Grails-Eclipse AND Groovy 2.4 from update site: http://dist.springsource.org/snapshot/GRECLIPSE/e4.4/
+* Download Grails 2.5 and go to windows -> preferences -> Groovy -> Grails and add the installation directory there
+* Download JDK (not JRE) 1.8 and go to windows -> preferences -> Installer JREs and add the home directory there
+* Clone the project
+* Import the project as a Grails project
+* If there are complaints about the Groovy compiler version then right click project -> properties -> Groovy Compilers and make sure 2.4 is selected. If it does not appear on the list make sure you downloaded it from the update site given in step 2. If you still have issues make sure Groovy 2.4 compiled is configured at a workspace level too.
+
 
 # Mail Plugin
 This project uses the green mail plugin and the grails mail plugin. You should be able to access it from localhost:8080/GrailsPaymentApp/greenmail
